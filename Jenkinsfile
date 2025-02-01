@@ -1,9 +1,12 @@
 pipeline {
   agent any
+  tools {
+    dockerTool 'DOCKER25'
+  }
   stages{
     stage('Clone Repository') {
      steps{
-      git 'https://github.com/xridhar/angular-jenkins-demo'
+      git 'https://github.com/xridhar/angular-jenkins-demo.git'
      }
     }
 
