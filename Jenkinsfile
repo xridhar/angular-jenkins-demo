@@ -10,7 +10,9 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/xridhar/angular-jenkins-demo.git'  // Update with your repo URL
+              retry(3) {
+                git branch: 'main', url: 'https://github.com/xridhar/angular-jenkins-demo.git'  // Update with your repo URL
+              }
             }
         }
 
