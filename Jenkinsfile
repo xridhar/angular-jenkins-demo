@@ -1,27 +1,50 @@
 pipeline {
-  agent any
+    agent any
 
-  stages{
-    stage('Clone Repository') {
-     steps{
-      git 'https://github.com/xridhar/angular-jenkins-demo.git'
-     }
+    environment {
+        DOCKER_IMAGE = "angular-nginx-app"
+        CONTAINER_NAME = "angular-nginx-container"
+        PORT = "8081"
     }
 
-    stage('Build Docker Image') {
-      steps{
-        script {
-          sh '/usr/local/bin/docker build -t angular-jenkins-demo .'
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/xridhar/angular-jenkins-demo.git'  // Update with your repo URL
+            }
         }
-      }
-    }
 
-    stage('Run Docker Container') {
-      steps{
-        script {
-           sh '/usr/local/bin/docker run -p 8081:80 angular-jenkins-demo'
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'npm install'
+                }
+            }
         }
-      }
+
+        stage('Build Angular App') {
+            steps {
+                script {
+                    sh 'npm run build --prod'
+                }
+            }
+        }
+
+        stage('Create Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t $DOCKER_IMAGE ."
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh "docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true"
+                    sh "docker run -d --name $CONTAINER_NAME -p $PORT:80 $DOCKER_IMAGE"
+                }
+            }
+        }
     }
-  }
 }
