@@ -1,7 +1,7 @@
 pipeline {
   agent any
   tools {
-    dockerTool 'AngularJenkinsDemo'
+    dockerTool 'docker-27.4.0'
   }
   stages{
     stage('Clone Repository') {
